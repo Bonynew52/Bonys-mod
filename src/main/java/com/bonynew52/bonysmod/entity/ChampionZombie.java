@@ -8,7 +8,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 
-public class ChampionZombie extends Zombie implements WallClimber {
+public class ChampionZombie extends Zombie {
     public ChampionZombie(EntityType<? extends Zombie> type, Level level) {
         super(type, level);
         
