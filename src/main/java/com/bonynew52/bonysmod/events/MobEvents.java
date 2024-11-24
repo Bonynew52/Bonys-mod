@@ -14,40 +14,45 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import static com.bonynew52.bonysmod.BonysMod.LOGGER;
 
 public class MobEvents {
-    private static final float THREE_STARS_CHAMPION_CHANCE = 0.002f;  // 0.2%
-    private static final float TWO_STARS_CHAMPION_CHANCE = 0.008f;    // 0.6% (acumulado)
-    private static final float ONE_STAR_CHAMPION_CHANCE = 0.026f;     // 1.8% (acumulado)
+    private static final float THREE_STARS_CHAMPION_CHANCE = 0.20f;  // 20%
+    private static final float TWO_STARS_CHAMPION_CHANCE = 0.30f;    // 30%
+    private static final float ONE_STAR_CHAMPION_CHANCE = 0.50f;     // 50%
     
     @SubscribeEvent
     public static void onEntitySpawn(EntityJoinLevelEvent event) {
-        if (!event.getLevel().isClientSide()) {
-            Entity entity = event.getEntity();
-            
-            if (entity instanceof Zombie && !(entity instanceof ChampionZombie)) {
-                float random = event.getLevel().getRandom().nextFloat();
+        LOGGER.debug("Entity Spawn Event: {}", event.getEntity().getType());
+
+        if (event.getEntity() instanceof Zombie && !(event.getEntity() instanceof ChampionZombie)) {
+            LOGGER.info("Zombie normal detectado");
+            float roll = event.getLevel().getRandom().nextFloat();
+            LOGGER.info("Roll: {}, Chances: 1★={}, 2★={}, 3★={}", 
+                roll, ONE_STAR_CHAMPION_CHANCE, TWO_STARS_CHAMPION_CHANCE, THREE_STARS_CHAMPION_CHANCE);
+
+            if (roll < ONE_STAR_CHAMPION_CHANCE) {
+                LOGGER.info("Creando zombie campeón de 1 estrella");
+                Level level = event.getLevel();
+                ChampionZombie champion = new ChampionZombie(
+                    ModEntities.CHAMPION_ZOMBIE.get(), 
+                    level
+                );
                 
-                if (random < THREE_STARS_CHAMPION_CHANCE) {
-                    Level level = event.getLevel();
-                    ChampionZombie champion = new ChampionZombie(
-                        ModEntities.CHAMPION_ZOMBIE.get(), 
-                        level
-                    );
-                    
-                    champion.setPos(entity.getX(), entity.getY(), entity.getZ());
-                    champion.setYRot(entity.getYRot());
-                    champion.setXRot(entity.getXRot());
-                    
-                    event.setCanceled(true);
-                    level.addFreshEntity(champion);
-                }
-                else if (random < TWO_STARS_CHAMPION_CHANCE) {
-                    makeNormalChampion((Zombie)entity, 2);
-                }
-                else if (random < ONE_STAR_CHAMPION_CHANCE) {
-                    makeNormalChampion((Zombie)entity, 1);
-                }
+                champion.setPos(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
+                champion.setYRot(event.getEntity().getYRot());
+                champion.setXRot(event.getEntity().getXRot());
+                
+                event.setCanceled(true);
+                level.addFreshEntity(champion);
+                LOGGER.info("Zombie campeón creado exitosamente");
+            }
+            else if (roll < TWO_STARS_CHAMPION_CHANCE) {
+                makeNormalChampion((Zombie)event.getEntity(), 2);
+            }
+            else if (roll < ONE_STAR_CHAMPION_CHANCE) {
+                LOGGER.info("¡Intentando crear zombie campeón!");
+                makeNormalChampion((Zombie)event.getEntity(), 1);
             }
         }
     }
