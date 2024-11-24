@@ -55,12 +55,12 @@ public class MobEvents {
     private static void makeNormalChampion(Zombie zombie, int stars) {
         switch (stars) {
             case 2:
-                zombie.addEffect(new MobEffectInstance(MobEffects.SPEED, Integer.MAX_VALUE, 1));
+                zombie.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1));
                 zombie.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, Integer.MAX_VALUE, 1));
                 zombie.setCustomName(Component.literal("★★ Champion ★★").withStyle(ChatFormatting.AQUA));
                 break;
             case 1:
-                zombie.addEffect(new MobEffectInstance(MobEffects.SPEED, Integer.MAX_VALUE, 0));
+                zombie.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 0));
                 zombie.setCustomName(Component.literal("★ Champion ★").withStyle(ChatFormatting.GREEN));
                 break;
         }
